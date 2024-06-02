@@ -1,0 +1,82 @@
+.feedMainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.feedPost{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+}
+.feedPostTop{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: #e0e0e0 1px solid;
+}
+.feedPostAuthorName{
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.feedPostTime{
+  font-size: 0.8em;
+  color: #9e9e9e;
+}
+.feedPostContent{
+  margin-top: 10px;
+  font-size: 1em;
+}
+.feedPostBottom{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: #e0e0e0 1px solid;
+}
+.feedPostForm{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+}
+.postInput{
+  width: 90%;
+  height: 100px;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  resize: none;
+}
+.postButton{
+  margin-top: 10px;
+  padding: 7px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.feedPostBottomAlignContainer{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
