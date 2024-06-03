@@ -17,7 +17,7 @@ function App() {
 
       let chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log('ChainId:', chainId);
-      if (chainId !== '0xaa36a7') {
+      if (chainId !== '0x4268') {
         alert('Please switch to Sepolia Test Network');
         return;
       }

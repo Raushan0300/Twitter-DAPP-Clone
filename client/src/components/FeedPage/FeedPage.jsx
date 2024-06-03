@@ -2,7 +2,7 @@ import './FeedPage.css';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import Twitter from '../../utils/TwitterContract.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
@@ -25,7 +25,7 @@ const FeedPage = () => {
 
         let allTweets = await TwitterContract.getAllTweets();
         setPosts(allTweets);
-        console.log(allTweets);
+        // console.log(allTweets);
       } else{
         console.log('Ethereum object not found');
       }
@@ -60,6 +60,24 @@ const FeedPage = () => {
     getAllTweets();
   },[]);
 
+  const handleLike=async(author, tweetId)=>{
+    try{
+      const { ethereum} = window;
+      if(ethereum){
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
+
+        let likeTx = await TwitterContract.toggelLikeTweet(author, tweetId);
+        await likeTx.wait();
+      } else{
+        console.log('Ethereum object not found');
+      }
+    } catch(error){
+      console.log(error);
+    };
+  }
+
   return (
     <div className='feedMainContainer'>
         <form className='feedPostForm' onSubmit={(event)=>{createTweet(event, tweetText)}}>
@@ -75,13 +93,13 @@ const FeedPage = () => {
                     </div>
                     <div className='feedPostContent'>{post.content}</div>
                     <div className='feedPostBottom'>
-                        <div className='feedPostBottomAlignContainer'>
+                        <div className='feedPostBottomAlignContainer' onClick={()=>{handleLike(post.author, post.id)}}>
                         <FavoriteBorderIcon />
                         {post.likes.toString()}
                         </div>
                         <RepeatIcon />
                         <EditIcon />
-                        <DeleteIcon />
+                        {/* <DeleteIcon /> */}
                     </div>
                 </div>
             )
