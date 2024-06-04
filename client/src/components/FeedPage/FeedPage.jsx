@@ -2,20 +2,29 @@ import './FeedPage.css';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import EditIcon from '@mui/icons-material/Edit';
-// import DeleteIcon from '@mui/icons-material/Delete';
 import Twitter from '../../utils/TwitterContract.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { TwitterContractAddress } from '../../config';
-import {Spinner} from 'react-activity';
 import 'react-activity/dist/Spinner.css';
+import LoaderDialog from '../LoaderDialog/LoaderDialog';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
   const [tweetText, setTweetText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleOnChangeTweet=(event)=>{
+    if(event.target.value.length>200){
+      return;
+    } else{
+      setTweetText(event.target.value);
+    }
+  }
+
   const getAllTweets = async()=>{
+    setIsLoading(true);
     try {
       const { ethereum } = window;
       if(ethereum){
@@ -31,7 +40,8 @@ const FeedPage = () => {
       }
     } catch (error) {
       console.log(error);
-    }
+    };
+    setIsLoading(false);
   };
 
   const createTweet = async(event, tweet)=>{
@@ -61,6 +71,7 @@ const FeedPage = () => {
   },[]);
 
   const handleLike=async(author, tweetId)=>{
+    setIsLoading(true);
     try{
       const { ethereum} = window;
       if(ethereum){
@@ -70,19 +81,21 @@ const FeedPage = () => {
 
         let likeTx = await TwitterContract.toggelLikeTweet(author, tweetId);
         await likeTx.wait();
+        getAllTweets();
       } else{
         console.log('Ethereum object not found');
       }
     } catch(error){
       console.log(error);
     };
+    setIsLoading(false);
   }
 
   return (
     <div className='feedMainContainer'>
         <form className='feedPostForm' onSubmit={(event)=>{createTweet(event, tweetText)}}>
-            <textarea placeholder="What's on your mind?" className='postInput' value={tweetText} onChange={(e)=>{setTweetText(e.target.value)}}></textarea>
-            {!isLoading?<button type='submit' className="postButton">Post</button>:<button className="postButton" disabled><Spinner color="#fff" size={12} speed={1} animating={true} /></button>}
+            <textarea placeholder="What's on your mind?" className='postInput' value={tweetText} onChange={(e)=>{handleOnChangeTweet(e)}}></textarea>
+            <button type='submit' className="postButton">Post</button>
         </form>
         {posts.map((post, id) => {
             return (
@@ -94,7 +107,7 @@ const FeedPage = () => {
                     <div className='feedPostContent'>{post.content}</div>
                     <div className='feedPostBottom'>
                         <div className='feedPostBottomAlignContainer' onClick={()=>{handleLike(post.author, post.id)}}>
-                        <FavoriteBorderIcon />
+                        {post.likedBySender?<FavoriteIcon style={{color:'red'}} />:<FavoriteBorderIcon />}
                         {post.likes.toString()}
                         </div>
                         <RepeatIcon />
@@ -104,6 +117,7 @@ const FeedPage = () => {
                 </div>
             )
         })}
+        {isLoading&&<LoaderDialog />}
     </div>
   )
 };
