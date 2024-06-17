@@ -10,6 +10,7 @@ import { TwitterContractAddress } from '../../config';
 import 'react-activity/dist/Spinner.css';
 import LoaderDialog from '../LoaderDialog/LoaderDialog';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { handleSolidityFunctions } from '../../SolidityFunctions';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
@@ -26,44 +27,18 @@ const FeedPage = () => {
 
   const getAllTweets = async()=>{
     setIsLoading(true);
-    try {
-      const { ethereum } = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let allTweets = await TwitterContract.getAllTweets();
-        setPosts(allTweets);
-        // console.log(allTweets);
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch (error) {
-      console.log(error);
-    };
+    await handleSolidityFunctions('getAllTweets').then((allTweets)=>{
+      setPosts(allTweets);
+    });
     setIsLoading(false);
   };
 
   const createTweet = async(event, tweet)=>{
     event.preventDefault();
     setIsLoading(true);
-    try {
-      const { ethereum } = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let tx = await TwitterContract.createTweet(tweet);
-        await tx.wait();
-        getAllTweets();
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    await handleSolidityFunctions('createTweet', [tweet]).then(()=>{
+      getAllTweets();
+    });
     setIsLoading(false);
   };
 
@@ -73,44 +48,17 @@ const FeedPage = () => {
 
   const handleLike=async(author, tweetId)=>{
     setIsLoading(true);
-    try{
-      const { ethereum} = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let likeTx = await TwitterContract.toggelLikeTweet(author, tweetId);
-        await likeTx.wait();
-        getAllTweets();
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch(error){
-      console.log(error);
-    };
+    await handleSolidityFunctions('toggelLikeTweet', [author, tweetId]).then(()=>{
+      getAllTweets();
+    });
     setIsLoading(false);
-  }
+  };
 
   const handleRetweet=async(author, tweetId)=>{
     setIsLoading(true);
-    try{
-      const { ethereum} = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let retweetTx = await TwitterContract.retweet(author, tweetId);
-        await retweetTx.wait();
-        getAllTweets();
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch(error){
-      console.log(error);
-    };
-    setIsLoading(false);
+    await handleSolidityFunctions('retweet', [author, tweetId]).then(()=>{
+      getAllTweets();
+    })
   }
 
   return (
