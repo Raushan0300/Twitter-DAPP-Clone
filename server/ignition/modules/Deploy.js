@@ -3,7 +3,7 @@ const main = async () => {
     const contract = await contractFactory.deploy();
     // await contract.deployed();
 
-    console.log("Contract deployed to:", contract);
+    console.log("Contract deployed to:", contract.target);
 };
 
 const runMain=async()=>{

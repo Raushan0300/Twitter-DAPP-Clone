@@ -1,0 +1,29 @@
+.profileMainContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+.profileAddress {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+.profileAddress span {
+  font-weight: 400;
+  color: #666;
+}
+.profileTotalPosts {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+.profileTotalPosts span {
+  font-weight: 400;
+  color: #666;
+}

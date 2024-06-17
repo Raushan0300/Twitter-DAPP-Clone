@@ -9,6 +9,7 @@ contract TwitterContract {
         uint256 timestamp;
         uint256 likes;
         mapping(address => bool) likers;
+        uint256 retweets;
     }
 
     struct PublicTweet {
@@ -18,11 +19,13 @@ contract TwitterContract {
         uint256 timestamp;
         uint256 likes;
         bool likedBySender;
+        uint256 retweets;
     }
 
     event TweetCreated(uint256 id, address author, string content, uint256 timestamp);
     event TweetLiked(address liker, address tweetAuthor, uint256 tweetId, uint256 newLikeCount);
     event TweetUnliked(address unliker, address tweetAuthor, uint256 tweetId, uint256 newLikeCount);
+    event TweetRetweet(address retweeter, address tweetAuthor, uint256 tweetId, uint256 newRetweetCount);
 
     uint16 public MAX_TWEET_LENGTH = 200;
 
@@ -79,13 +82,20 @@ contract TwitterContract {
         }
     }
 
+    function retweet(address author, uint256 id) external {
+        require(tweets[author].length > id, "TWEET DOES NOT EXIST");
+        Tweet storage tweet = tweets[author][id];
+        tweet.retweets++;
+        emit TweetRetweet(msg.sender, author, id, tweet.retweets);
+    }
+
     function getUserTweets() public view returns (PublicTweet[] memory) {
         uint256 tweetCount = tweets[msg.sender].length;
         PublicTweet[] memory publicTweets = new PublicTweet[](tweetCount);
         
         for (uint256 i = 0; i < tweetCount; i++) {
             Tweet storage tweet = tweets[msg.sender][i];
-            publicTweets[i] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender]);
+            publicTweets[i] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets);
         }
         
         return publicTweets;
@@ -104,7 +114,7 @@ contract TwitterContract {
             address author = tweetAuthors[i];
             for (uint256 j = 0; j < tweets[author].length; j++) {
                 Tweet storage tweet = tweets[author][j];
-                publicTweets[index] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender]);
+                publicTweets[index] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets);
                 index++;
             }
         }

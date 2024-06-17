@@ -40,10 +40,13 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  width: 80%;
+  padding-top: 10px;
+}
+.feedPostBorder{
+  border-bottom: #e0e0e0 1px solid;
   width: 100%;
   margin-top: 20px;
-  padding-top: 10px;
-  border-top: #e0e0e0 1px solid;
 }
 .feedPostForm{
   display: flex;

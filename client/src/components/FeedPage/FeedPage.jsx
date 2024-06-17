@@ -1,7 +1,8 @@
 import './FeedPage.css';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import RepeatIcon from '@mui/icons-material/Repeat';
-import EditIcon from '@mui/icons-material/Edit';
+// import EditIcon from '@mui/icons-material/Edit';
+import CommentIcon from '@mui/icons-material/Comment';
 import Twitter from '../../utils/TwitterContract.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
@@ -91,6 +92,27 @@ const FeedPage = () => {
     setIsLoading(false);
   }
 
+  const handleRetweet=async(author, tweetId)=>{
+    setIsLoading(true);
+    try{
+      const { ethereum} = window;
+      if(ethereum){
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
+
+        let retweetTx = await TwitterContract.retweet(author, tweetId);
+        await retweetTx.wait();
+        getAllTweets();
+      } else{
+        console.log('Ethereum object not found');
+      }
+    } catch(error){
+      console.log(error);
+    };
+    setIsLoading(false);
+  }
+
   return (
     <div className='feedMainContainer'>
         <form className='feedPostForm' onSubmit={(event)=>{createTweet(event, tweetText)}}>
@@ -102,16 +124,21 @@ const FeedPage = () => {
                 <div className='feedPost' key={id}>
                     <div className='feedPostTop'>
                     <div className='feedPostAuthorName'>{post.author}</div>
-                    <div className='feedPostTime'>{post.timestamp.toString()}</div>
+                    <div className='feedPostTime'>{new Date((Number(post.timestamp))*1000).toLocaleDateString()}</div>
                     </div>
                     <div className='feedPostContent'>{post.content}</div>
+                    <div className='feedPostBorder'></div>
                     <div className='feedPostBottom'>
                         <div className='feedPostBottomAlignContainer' onClick={()=>{handleLike(post.author, post.id)}}>
                         {post.likedBySender?<FavoriteIcon style={{color:'red'}} />:<FavoriteBorderIcon />}
                         {post.likes.toString()}
                         </div>
-                        <RepeatIcon />
-                        <EditIcon />
+                        <div className='feedPostBottomAlignContainer' onClick={()=>{handleRetweet(post.author, post.id)}}>
+                        <RepeatIcon style={{cursor:'pointer'}} />
+                        {post.retweets.toString()}
+                        </div>
+                        <CommentIcon style={{cursor:'pointer'}} />
+                        {/* <EditIcon /> */}
                         {/* <DeleteIcon /> */}
                     </div>
                 </div>

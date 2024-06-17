@@ -7,7 +7,8 @@ import Settings from '../Settings/Settings';
 import Profile from '../Profile/Profile';
 import FeedPage from '../FeedPage/FeedPage';
 
-const Sidebar = () => {
+const Sidebar = (props) => {
+    const {currentAccount} = props;
     const [selectedTab, setSelectedTab] = useState(0);
 
   return (
