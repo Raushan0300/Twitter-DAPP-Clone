@@ -1,12 +1,8 @@
 import './FeedPage.css';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import RepeatIcon from '@mui/icons-material/Repeat';
-// import EditIcon from '@mui/icons-material/Edit';
 import CommentIcon from '@mui/icons-material/Comment';
-import Twitter from '../../utils/TwitterContract.json';
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { TwitterContractAddress } from '../../config';
 import 'react-activity/dist/Spinner.css';
 import LoaderDialog from '../LoaderDialog/LoaderDialog';
 import FavoriteIcon from '@mui/icons-material/Favorite';
