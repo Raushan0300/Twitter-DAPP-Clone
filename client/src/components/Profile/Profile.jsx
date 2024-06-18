@@ -11,6 +11,7 @@ import RepeatIcon from '@mui/icons-material/Repeat';
 import EditIcon from '@mui/icons-material/Edit';
 import CommentIcon from '@mui/icons-material/Comment';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { handleSolidityFunctions } from '../../SolidityFunctions';
 
 const Profile = () => {
   const {currentAccount} = useContext(WalletContext);
@@ -19,49 +20,32 @@ const Profile = () => {
 
   const getUserTweets = async()=>{
     setIsLoading(true);
-    try {
-      const { ethereum } = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let allTweets = await TwitterContract.getUserTweets();
-        setPosts(allTweets);
-        // console.log(allTweets);
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch (error) {
-      console.log(error);
-    };
+    await handleSolidityFunctions('getUserTweets').then((allTweets)=>{
+      setPosts(allTweets);
+    });
     setIsLoading(false);
   };
 
   const handleLike=async(author, tweetId)=>{
     setIsLoading(true);
-    try{
-      const { ethereum} = window;
-      if(ethereum){
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        const TwitterContract = new ethers.Contract(TwitterContractAddress, Twitter.abi, signer);
-
-        let likeTx = await TwitterContract.toggelLikeTweet(author, tweetId);
-        await likeTx.wait();
-        getUserTweets();
-      } else{
-        console.log('Ethereum object not found');
-      }
-    } catch(error){
-      console.log(error);
-    };
+    await handleSolidityFunctions('toggelLikeTweet', [author, tweetId]).then(()=>{
+      getUserTweets();
+    });
     setIsLoading(false);
-  }
+  };
+
+  const handleRetweet=async(author, tweetId)=>{
+    setIsLoading(true);
+    await handleSolidityFunctions('retweet', [author, tweetId]).then(()=>{
+      getAllTweets();
+    });
+    setIsLoading(false);
+  };
 
   useEffect(()=>{
     getUserTweets();
   },[]);
+
   return (
     <div className='profileMainContainer'>
       <div className='profileAddress'><span>User Address:</span> {currentAccount}</div>
@@ -80,7 +64,10 @@ const Profile = () => {
                         {post.likedBySender?<FavoriteIcon style={{color:'red'}} />:<FavoriteBorderIcon />}
                         {post.likes.toString()}
                         </div>
+                        <div className='feedPostBottomAlignContainer' onClick={()=>{handleRetweet(post.author, post.id)}}>
                         <RepeatIcon style={{cursor:'pointer'}} />
+                        {post.retweets.toString()}
+                        </div>
                         <CommentIcon style={{cursor:'pointer'}} />
                         <EditIcon style={{cursor:'pointer'}} />
                         <DeleteIcon style={{cursor:'pointer'}} />

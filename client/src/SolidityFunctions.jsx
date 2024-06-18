@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { TwitterContractAddress } from './config';
 import Twitter from './utils/TwitterContract.json';
 
-const readOnlyFunctions = ['getAllTweets'];
+const readOnlyFunctions = ['getAllTweets', 'getUserTweets'];
 
 const handleSolidityFunctions = async (solFun, solProps=[]) => {
   try {

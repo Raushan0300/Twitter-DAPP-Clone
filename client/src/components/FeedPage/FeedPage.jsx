@@ -7,11 +7,13 @@ import 'react-activity/dist/Spinner.css';
 import LoaderDialog from '../LoaderDialog/LoaderDialog';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { handleSolidityFunctions } from '../../SolidityFunctions';
+import CommentsPage from '../CommentsPage/CommentsPage';
 
 const FeedPage = () => {
   const [posts, setPosts] = useState([]);
   const [tweetText, setTweetText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentView, setCurrentView] = useState({ view: 'feed', author: '', id: '' });
 
   const handleOnChangeTweet=(event)=>{
     if(event.target.value.length>200){
@@ -55,7 +57,15 @@ const FeedPage = () => {
     await handleSolidityFunctions('retweet', [author, tweetId]).then(()=>{
       getAllTweets();
     })
-  }
+  };
+
+  const handleCommentClick = (author, id) => {
+    setCurrentView({ view: 'comments', author, id });
+};
+
+if (currentView.view === 'comments') {
+    return <CommentsPage author={currentView.author} id={currentView.id} />;
+};
 
   return (
     <div className='feedMainContainer'>
@@ -81,7 +91,9 @@ const FeedPage = () => {
                         <RepeatIcon style={{cursor:'pointer'}} />
                         {post.retweets.toString()}
                         </div>
+                        <div className='feedPostBottomAlignContainer' onClick={() => handleCommentClick(post.author, post.id)}>
                         <CommentIcon style={{cursor:'pointer'}} />
+                    </div>
                         {/* <EditIcon /> */}
                         {/* <DeleteIcon /> */}
                     </div>
