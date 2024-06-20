@@ -32,3 +32,17 @@
     align-items: center;
     gap: 10px;
 }
+
+@media screen and (max-width: 768px){
+    .headerMainContainer{
+        padding: 10px 20px;
+    }
+    .headerXlogoText{
+        font-size: 1.2rem;
+    }
+    .headerConnectBtn{
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+}

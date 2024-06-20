@@ -29,7 +29,7 @@ const Header = (props) => {
         </button>
       ) : (
         <div className="headerConnected">
-          <div>{currentAccount}</div>
+          <div>{currentAccount.slice(0,2)+'...'+currentAccount.slice(-3)}</div>
           <button
             className="headerConnectBtn"
             onClick={() => {

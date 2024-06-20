@@ -10,7 +10,7 @@ function App() {
   return (
     <div className='mainContainer'>
       <Header connectWallet={connectWallet} currentAccount={currentAccount} logout={handleLogout} />
-      {currentAccount&&<Sidebar currentAccount={currentAccount} />}
+      {currentAccount&&<Sidebar />}
     </div>
   )
 };

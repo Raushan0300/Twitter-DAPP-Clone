@@ -9,3 +9,10 @@ body{
   flex-direction: column;
   gap: 50px;
 }
+
+@media screen and (max-width: 768px){
+  .mainContainer{
+    padding: 20px 20px;
+  }
+  
+}

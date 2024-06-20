@@ -10,6 +10,8 @@ contract TwitterContract {
         uint256 likes;
         mapping(address => bool) likers;
         uint256 retweets;
+        uint256 commentCount;
+        mapping(uint256 => Comment) comments;
     }
 
     struct PublicTweet {
@@ -20,12 +22,21 @@ contract TwitterContract {
         uint256 likes;
         bool likedBySender;
         uint256 retweets;
+        uint256 commentCount;
+    }
+
+    struct Comment {
+        uint256 id;
+        address commenter;
+        string content;
+        uint256 timestamp;
     }
 
     event TweetCreated(uint256 id, address author, string content, uint256 timestamp);
     event TweetLiked(address liker, address tweetAuthor, uint256 tweetId, uint256 newLikeCount);
     event TweetUnliked(address unliker, address tweetAuthor, uint256 tweetId, uint256 newLikeCount);
     event TweetRetweet(address retweeter, address tweetAuthor, uint256 tweetId, uint256 newRetweetCount);
+    event CommentCreated(uint256 tweetId, uint256 commentId, address commenter, string content, uint256 timestamp);
 
     uint16 public MAX_TWEET_LENGTH = 200;
 
@@ -89,13 +100,42 @@ contract TwitterContract {
         emit TweetRetweet(msg.sender, author, id, tweet.retweets);
     }
 
+    function addComment(address author, uint256 id, string memory _comment) public {
+        require(bytes(_comment).length <= MAX_TWEET_LENGTH, "MAX COMMENT LENGTH IS NOT MORE THAN 200 CHARACTERS");
+
+        Tweet storage tweet = tweets[author][id];
+        uint256 commentId = tweet.commentCount;
+        Comment storage newComment = tweet.comments[commentId];
+
+        newComment.id = commentId;
+        newComment.commenter = msg.sender;
+        newComment.content = _comment;
+        newComment.timestamp = block.timestamp;
+
+        tweet.commentCount++;
+
+        emit CommentCreated(id, commentId, newComment.commenter, newComment.content, newComment.timestamp);
+    }
+
+    function getComments(address author, uint256 id) public view returns (Comment[] memory) {
+        Tweet storage tweet = tweets[author][id];
+        Comment[] memory comments = new Comment[](tweet.commentCount);
+
+        for (uint256 i = 0; i < tweet.commentCount; i++) {
+            Comment storage comment = tweet.comments[i];
+            comments[i] = Comment(comment.id, comment.commenter, comment.content, comment.timestamp);
+        }
+
+        return comments;
+    }
+
     function getUserTweets() public view returns (PublicTweet[] memory) {
         uint256 tweetCount = tweets[msg.sender].length;
         PublicTweet[] memory publicTweets = new PublicTweet[](tweetCount);
         
         for (uint256 i = 0; i < tweetCount; i++) {
             Tweet storage tweet = tweets[msg.sender][i];
-            publicTweets[i] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets);
+            publicTweets[i] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets, tweet.commentCount);
         }
         
         return publicTweets;
@@ -114,7 +154,7 @@ contract TwitterContract {
             address author = tweetAuthors[i];
             for (uint256 j = 0; j < tweets[author].length; j++) {
                 Tweet storage tweet = tweets[author][j];
-                publicTweets[index] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets);
+                publicTweets[index] = PublicTweet(tweet.id, tweet.author, tweet.content, tweet.timestamp, tweet.likes, tweet.likers[msg.sender], tweet.retweets, tweet.commentCount);
                 index++;
             }
         }

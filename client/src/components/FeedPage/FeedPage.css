@@ -84,3 +84,19 @@
   gap: 10px;
   cursor: pointer;
 }
+
+@media screen and (max-width: 768px){
+  .feedPost{
+    width: 90%;
+  }
+  .feedPostForm{
+    width: 90%;
+  }
+  .postInput{
+    width: 100%;
+  }
+  .feedPostBottom{
+    width: 100%;
+  }
+  
+}
