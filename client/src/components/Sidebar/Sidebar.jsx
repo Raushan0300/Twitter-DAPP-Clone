@@ -1,7 +1,6 @@
 import './Sidebar.css';
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
 import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
 import Profile from '../Profile/Profile';
 import FeedPage from '../FeedPage/FeedPage';
